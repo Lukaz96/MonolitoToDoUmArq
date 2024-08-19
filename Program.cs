@@ -79,7 +79,7 @@ namespace MonolithicTodoApp
         //Remove uma tarefa da lista com base em seu número.
         static void RemoveTask()
         {
-            /* Solicita ao usuário que insira o número da tarefa que deseja remover. 
+            /* Solicita ao usuário que insira o número da tarefa que deseja remover.
              * Tenta converter a entrada do usuário para um número inteiro.
              * Verifica se o número é válido (dentro do intervalo das tarefas disponíveis).
              * Se for válido, remove a tarefa correspondente da lista e confirma a remoção ao usuário.
