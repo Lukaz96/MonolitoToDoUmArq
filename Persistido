@@ -1,0 +1,135 @@
+using System;
+using System.Collections.Generic;
+
+// Define um namespace chamado MonolithicTodoApp para organizar o código
+namespace MonolithicTodoApp
+{
+    //classe principal que contém o método Main (ponto de entrada do programa), onde a execução da aplicação começa.
+    class Program
+    {
+        public string filePath = "tasks.txt";
+        // Lista que armazenará as tarefas
+        static List<string> tasks = new List<string>();
+
+        //Método principal e ponto de entrada do programa, executado quando inicia a aplicação.
+        static void Main(string[] args)
+        {
+            Program TodoList = new Program();
+
+            /* Este é um loop infinito, o que significa que a aplicação continuará rodando 
+            * até que a opção de sair (Exit) seja escolhida. Dentro desse loop, o programa 
+            * exibe o menu principal repetidamente e processa a entrada do usuário.
+            */
+            while (true)
+            {
+                Console.WriteLine("To-Do List Application");
+                Console.WriteLine("1. Add Task");
+                Console.WriteLine("2. List Tasks");
+                Console.WriteLine("3. Remove Task");
+                Console.WriteLine("4. Exit");
+                Console.Write("Select an option: ");
+                var option = Console.ReadLine();
+
+                switch (option)
+                {
+                    case "1":
+                        Console.Write("Enter task description: ");
+                        var description = Console.ReadLine();
+                        TodoList.AddTask(description);
+                        break;
+                    case "2":
+                        TodoList.ListTasks();
+                        break;
+                    case "3":
+                        Console.Write("Enter task ID to remove: ");
+                        if (int.TryParse(Console.ReadLine(), out int id))
+                        {
+                            TodoList.RemoveTask(id);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid ID!");
+                        }
+                        break;
+                    case "4":
+                        Console.WriteLine("Exiting...");
+                        return;
+                    default:
+                        Console.WriteLine("Invalid option, try again.");
+                        break;
+                }
+            }
+
+            //Este método adiciona uma nova tarefa à lista de tarefas.
+
+        }
+
+        public List<string> LoadTasks()
+        {
+            /*Verifica se o arquivo tasks.txt existe. Se não existir, retorna uma nova lista vazia de tarefas
+             * (new List<string>()), indicando que não há tarefas salvas anteriormente.*/
+            if (!File.Exists(filePath))
+            {
+                return new List<string>();
+            }
+
+            /* Se o arquivo existir, o método lê todas as linhas do arquivo tasks.txt 
+             * (cada linha representando uma tarefa) e as armazena em uma nova lista de strings. 
+             * Esta lista é então retornada.*/
+            return new List<string>(File.ReadAllLines(filePath));
+
+            //Em resumo, este método permite que as tarefas sejam carregadas na memória ao iniciar a aplicação.
+        }
+
+        public void SaveTasks(List<string> tasks)
+        {
+            /* Sobrescreve o conteúdo do arquivo tasks.txt com as tarefas atuais da lista tasks. 
+             * Cada elemento da lista é gravado como uma nova linha no arquivo.*/
+            File.WriteAllLines(filePath, tasks);
+
+            //Em resumo, este método é chamado sempre que uma tarefa é adicionada ou removida,
+            //garantindo que o estado mais recente das tarefas seja persistido.
+        }
+
+        public void AddTask(string description)
+        {
+            tasks.Add(description); //Adiciona a tarefa à lista tasks.
+            SaveTasks(tasks);// Após adicionar a tarefa, salva a lista atualizada de tarefas no armazenamento persistido.
+            Console.WriteLine("Task added.");
+        }
+
+        //Lista todas as tarefas atualmente armazenadas na lista.
+        public void ListTasks()
+        {
+            /*Se a lista estiver vazia (tasks.Count == 0), 
+             * o método exibe uma mensagem informando que não há tarefas disponíveis e retorna sem fazer mais nada.*/
+            if (tasks.Count == 0)
+            {
+                Console.WriteLine("No tasks available.");
+                return;
+            }
+            /* Itera por todas as tarefas na lista, exibindo cada uma com seu número correspondente. 
+             * Isso facilita ao usuário identificar qual tarefa ele deseja remover.*/
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {tasks[i]}");
+            }
+        }
+
+        //Remove uma tarefa da lista com base em seu número.
+        public void RemoveTask(int id)
+        {
+            //Verifica se o id fornecido é válido. Se não for, o método exibe uma mensagem de erro e retorna.
+            if (id <= 0 || id > tasks.Count)
+            {
+                Console.WriteLine("Invalid task ID.");
+                return;
+            }
+
+            tasks.RemoveAt(id - 1); //Remove a tarefa no índice id - 1 (subtrai 1 porque as listas em C# são indexadas a partir de 0).
+            SaveTasks(tasks); //Após remover a tarefa, a lista atualizada de tarefas é salva no armazenamento persistido.
+            Console.WriteLine("Task removed.");
+        }
+    }
+
+}
